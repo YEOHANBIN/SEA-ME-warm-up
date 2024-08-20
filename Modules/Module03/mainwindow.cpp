@@ -1,5 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QFileDialog>
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -12,6 +14,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->add_pButton, &QPushButton::clicked, this, &MainWindow::onAddContact);
     connect(ui->remove_pButton, &QPushButton::clicked, this, &MainWindow::onRemoveContact);
     connect(ui->search_pButton, &QPushButton::clicked, this, &MainWindow::onSearchContact);
+    connect(ui->save_pButton, &QPushButton::clicked, this, &MainWindow::onSaveContacts);
+    connect(ui->load_pButton, &QPushButton::clicked, this, &MainWindow::onLoadContacts);
+
 
     ui->contact_listView->setModel(model);
 }
@@ -73,5 +78,32 @@ void MainWindow::onSearchContact(){
         ui->number_line->clear();
         ui->email_line->clear();
         //ui->nickname_line->clear();
+    }
+}
+
+void MainWindow::onSaveContacts(){
+    QString filePath = QFileDialog::getSaveFileName(this, tr("Save Contacts"), "", tr("Text Files (*.txt)"));
+    if(!filePath.isEmpty()){
+        if(contactList->save_file(filePath)){
+            QMessageBox::information(this, tr("Success"), tr("File saved successfully."));
+        }
+        else{
+            QMessageBox::warning(this, tr("Error"), tr("Failed to save file."));
+        }
+    }
+}
+
+void MainWindow::onLoadContacts(){
+    QString filePath = QFileDialog::getOpenFileName(this, tr("Save Contacts"), "", tr("Text Files (*.txt)"));
+    if(!filePath.isEmpty()){
+        contactList->load_file(filePath);
+
+        model->clear();
+
+        for(Contact* contact : contactList->getContacts()){
+            QStandardItem *item = new QStandardItem(contact->getName());
+            item->setData(QVariant::fromValue(static_cast<void*>(contact)));
+            model->appendRow(item);
+        }
     }
 }

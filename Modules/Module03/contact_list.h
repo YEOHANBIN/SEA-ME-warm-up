@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QList>
+#include <QString>
 #include "contact.h"
 
 class contact_list : public QObject
@@ -18,6 +19,11 @@ public:
     void add_contact(Contact* contact);
     void remove_contact(const QString& name);
     Contact* search_contact(const QString& name) const;
+
+    bool save_file(const QString &filePath);
+    bool load_file(const QString &filePath);
+
+    const QList<Contact*>& getContacts() const;
 
 signals:
     void add_sign(Contact* contact);

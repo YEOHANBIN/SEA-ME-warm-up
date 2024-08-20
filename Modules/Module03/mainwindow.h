@@ -21,6 +21,8 @@ private slots:
     void onAddContact();
     void onRemoveContact();
     void onSearchContact();
+    void onSaveContacts();
+    void onLoadContacts();
 
 private:
     Ui::MainWindow *ui;
